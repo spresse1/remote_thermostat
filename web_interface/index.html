@@ -1,0 +1,126 @@
+<html>
+	<head>
+		<title> Radio Thermostat Remote Web UI</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script>
+		$.support.cors = true;
+		</script>
+		<script>
+			// Turn on XSS/Disable CORS
+			// DANGER DANGER DANGER
+			// this exposes us to all sorts of attacks wrt XMLHttpRequests.
+			// In this case it's no big deal, since this page a) hits only very 
+			// limited URLs and b) should not be exposed to the internet
+			// TODO Make sure Docs warn of EXTREME DANGER of internet exposure
+			$.support.cors = true;
+			
+			// Constants
+			const thermoHostname="http://thermostat";
+			const thermoInfo = "/tstat";
+			const thermoModel = "/tstat/model";
+			const thermoProgramHeat = "/tstat/program/heat";
+			const thermoProgramCool = "/tstat/program/cool";
+			
+			const tmodes = ["Off", "Heat", "Cool", "Auto"];
+			const days = ["Monday", "Tuesday", "Wednesday", "Thursday",
+				"Friday", "Saturday", "Sunday" ];
+			
+			// Runtime state
+			var model = "Unknown";
+			
+			function ajaxFailed(xhr, status, errorThrown) {
+				alert( "Sorry, there was a problem! Server replied: " + 
+					xhr.status + ": " + xhr.statusText );
+				console.log( "Error: " + errorThrown );
+				console.log( "Status: " + status );
+			}
+			
+			function ajaxAlways(xhr, status) {
+				console.dir( xhr );
+			}
+			
+			function loadProgram() {
+				$.ajax({
+					url: thermoHostname + thermoProgramHeat,
+					type: "GET",
+					dataType: "json",
+				})
+				.done(function (json) {
+					programDiv = $( "#programDisplay" );
+					for (day in json) {
+						programDiv.html = programDiv.html + 
+							"<div id=\"programHeat" + days[day] + "\"></div>";
+						for (time in day) {
+						
+						}
+					}
+				})
+				.fail(function (xhr, status, errorThrown) { ajaxFailed(xhr, status, errorThrown) })
+				.always(function (xhr, status) { ajaxAlways(xhr, status) })
+				
+			}
+			
+			function refresh() {
+				$.ajax({
+					url: thermoHostname + thermoModel,
+					type: "GET",
+					dataType: "json",
+				})
+				.done(function (json) {
+					model = json.model.split(" ")[0];
+					if (json.model.split(" ")[0] != "CT30" ) {
+						$( "#fanStatus" ).text("Unavailable on this model");
+					}
+				})
+				.fail(function (xhr, status, errorThrown) { ajaxFailed(xhr, status, errorThrown) })
+				.always(function (xhr, status) { ajaxAlways(xhr, status) })
+
+				// Get current status
+				$.ajax({
+					url: thermoHostname + thermoInfo,
+					type: "GET",
+					dataType: "json",
+				})
+				// On success...
+				.done(function( json ) {
+					$( "#tempDisplay" ).text( json.temp )
+					$( "#tstatState" ).text( tmodes[json.tstate] );
+					$( "#tstatMode" ).text( tmodes[json.tmode] );
+					
+					if (json.fmode==1 || json.fmode==0 ) {
+						$( "#fanMode" ).text("auto");
+					} else {
+						$( "#fanMode" ).text("on");
+					}
+				})
+				.fail(function (xhr, status, errorThrown) { ajaxFailed(xhr, status, errorThrown) })
+				.always(function (xhr, status) { ajaxAlways(xhr, status) })
+				
+			}
+			
+			$( document ).ready(function () {
+				$("#showProgramLink").click(function (e) { e.preventDefault;
+					alert("Loading programs");
+					loadProgram();
+				});
+
+				// Do stuff that happens at init 
+				refresh();
+			})
+		</script>
+	</head>
+	<body>
+		<div>Temperature: </div>
+		<div id="tempDisplay">00</div>
+		<div>Mode: </div>
+		<div id="tstatMode">?</div>
+		<div>State: </div>
+		<div id="tstatState">?</div>
+		<div>Fan mode:</div>
+		<div id="fanMode">?</div>
+		<div>Fan status:</div>
+		<div id="fanStatus">?</div>
+		<a id="showProgramLink">Display Programs</a>
+		<div id="programDisplay"></div>
+	</body>
+</html>
