@@ -20,37 +20,20 @@ This project is deliberately GPL so that RTCOA must acknowledge it if it
 should become something they wish to use.
 
 # Subprojects
-This repository has several subprojects, which have different purposes.  
-These can be used together or individually.
+This repository has several subprojects, which have different purposes.  These can be used together or individually.
 
 ## remote_thermo_measurement
-This is a simple proof-of-concept daemon to read the temperature from a 
-location other than where the thermostat is.  It assumes it is running 
-on a system identical to [this 
-tutorial](https://learn.adafruit.com/measuring-temperature-with-a-beaglebone-black/overview).  
-If you do not have this hardware, it should serve as a reasonable 
-example of how to implement the networked portion of this functionality.  
-In the future, it may be expanded to include more hardware.  If you 
-write a similar tool (no matter how ugly). let me know and we'll work to 
-integrate it.
+This is a simple proof-of-concept daemon to read the temperature from a location other than where the thermostat is.  It assumes it is running on a system identical to [this tutorial](https://learn.adafruit.com/measuring-temperature-with-a-beaglebone-black/overview).  If you do not have this hardware, it should serve as a reasonable example of how to implement the networked portion of this functionality.  In the future, it may be expanded to include more hardware.  If you write a similar tool (no matter how ugly). let me know and we'll work to integrate it.
 
 ## web_interface
 
-This is a (relatively) simple interface you can use to control the 
-thermostat's settings.  Design recommendations welcome!
+This is a (relatively) simple interface you can use to control the thermostat's settings.  Design recommendations welcome!
 
 requires api_proxy.
 
 ## api_proxy
 
 This project has two purposes:
-1. To proxy API requests.  web_interface cannot make requests directly 
-against the thermostat due to CSRF protections and CORS.  The thermostat 
-doesn't set the appropriate headers to enable remote requests.  This API 
-either acts to proxy requests for a web_interface instance on the same 
-host or adds the additional headers necessary for hosts somehere else to 
-make requests.
-2. To add authentication.  This makes it suitable to expose to a wider 
-network than merely your home, possibly allowing exposure to the 
-internet.  Note that I still recommend not doing so and instead using 
-SSH tunnels or a VPN to access the thermostat/web interface remotely.
+
+1. To proxy API requests.  web_interface cannot make requests directly against the thermostat due to CSRF protections and CORS.  The thermostat doesn't set the appropriate headers to enable remote requests.  This API either acts to proxy requests for a web_interface instance on the same host or adds the additional headers necessary for hosts somehere else to make requests.
+2. To add authentication.  This makes it suitable to expose to a wider network than merely your home, possibly allowing exposure to the internet.  Note that I still recommend not doing so and instead using SSH tunnels or a VPN to access the thermostat/web interface remotely.
