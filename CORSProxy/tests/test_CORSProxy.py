@@ -4,6 +4,7 @@
 import mock
 import unittest
 from CORSProxy import CORSProxy
+from CORSProxy.CORSProxy import Proxy
 
 class Response:
 	status=""
@@ -25,10 +26,10 @@ class test_CORSProxy(unittest.TestCase):
 		self.headers = []
 		self.status = "200 OK"
 		self.response = Response()
-		self.mf = mock.patch('CORSProxy.proxy_exact_request').start()
+		self.mf = mock.patch('CORSProxy.CORSProxy.proxy_exact_request').start()
 		self.mf.return_value="Success!"
 		self.mf.side_effect = self.simulate_called
-		self.cp = CORSProxy('localhost')
+		self.cp = Proxy('localhost')
 	
 	def get_default_environ(self):
 		return {
@@ -60,17 +61,17 @@ class test_CORSProxy(unittest.TestCase):
 		self.assertEquals(self.response.status, "200 OK")
 	
 	def test_auth_true(self):
-		self.cp = CORSProxy('localhost', auth=lambda x: True)
+		self.cp = Proxy('localhost', auth=lambda x: True)
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEqual(self.response.status, "200 OK")
 		
 	def test_auth_false(self):
-		self.cp = CORSProxy('localhost', auth=lambda x: False)
+		self.cp = Proxy('localhost', auth=lambda x: False)
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEqual(self.response.status, "401 Unauthorized")
 		
 	def test_auth_message(self):
-		self.cp = CORSProxy('localhost', 
+		self.cp = Proxy('localhost', 
 			auth=lambda x: "My error message")
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEqual(self.response.status, "401 Unauthorized")
@@ -93,7 +94,7 @@ class test_CORSProxy(unittest.TestCase):
 		self.assertNotIn('HTTPS', self.response.environ)
 	
 	def test_force_http_downgrade(self):
-		self.cp = CORSProxy('localhost', target_protocol="http")
+		self.cp = Proxy('localhost', target_protocol="http")
 		env = self.get_default_environ()
 		env['wsgi.url_scheme'] = "https"
 		env['HTTPS'] = "on"
@@ -104,7 +105,7 @@ class test_CORSProxy(unittest.TestCase):
 		self.assertNotIn('HTTPS', self.response.environ)
 	
 	def test_force_https_upgrade(self):
-		self.cp = CORSProxy('localhost', target_protocol="https")
+		self.cp = Proxy('localhost', target_protocol="https")
 		env = self.get_default_environ()
 		res = self.cp(env, self.simulate_start_response)
 		self.assertEquals(res, "Success!")
@@ -113,13 +114,13 @@ class test_CORSProxy(unittest.TestCase):
 		self.assertEquals(self.response.environ['HTTPS'], "on")
 	
 	def test_bad_target_protocol(self):
-		self.cp = CORSProxy('localhost', target_protocol="junkproto")
+		self.cp = Proxy('localhost', target_protocol="junkproto")
 		env = self.get_default_environ()
 		with self.assertRaises(ValueError):
 			self.cp(env, self.simulate_start_response)	
 	
 	def test_cant_fall_through_proto(self):
-		self.cp = CORSProxy('localhost', target_protocol="hTTp")
+		self.cp = Proxy('localhost', target_protocol="hTTp")
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEquals(self.response.environ['wsgi.url_scheme'], "http")
 	
@@ -141,13 +142,13 @@ class test_CORSProxy(unittest.TestCase):
 			self.cp(self.get_default_environ(), self.simulate_start_response)
 	
 	def test_pick_port_http(self):
-		self.cp = CORSProxy('localhost')
+		self.cp = Proxy('localhost')
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEquals(self.cp.environ['SERVER_PORT'], "80")
 		self.assertEquals(self.response.environ['SERVER_PORT'], "80")
 	
 	def test_pick_port_https(self):
-		self.cp = CORSProxy('localhost')
+		self.cp = Proxy('localhost')
 		env = self.get_default_environ()
 		env['wsgi.url_scheme'] = "https"
 		res = self.cp(env, self.simulate_start_response)
@@ -155,13 +156,13 @@ class test_CORSProxy(unittest.TestCase):
 		self.assertEquals(self.response.environ['SERVER_PORT'], "443")
 	
 	def test_update_host_server(self):
-		self.cp = CORSProxy('self.domain')
+		self.cp = Proxy('self.domain')
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEquals(self.response.environ['SERVER_NAME'], "self.domain")
 		self.assertEquals(self.response.environ['HTTP_HOST'], "self.domain:80")
 	
 	def test_keep_odd_port(self):
-		self.cp = CORSProxy('localhost', '17')
+		self.cp = Proxy('localhost', '17')
 		res = self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEquals(self.response.environ['HTTP_HOST'], "localhost:17")
 		self.assertEquals(self.cp.environ['SERVER_PORT'], "17")
@@ -169,7 +170,7 @@ class test_CORSProxy(unittest.TestCase):
 	
 	def test_add_headers(self):
 		hdr = [("X-My-Special-Header", "My-Value")]
-		self.cp = CORSProxy('localhost', add_headers=hdr)
+		self.cp = Proxy('localhost', add_headers=hdr)
 		self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEquals(hdr, self.response.headers)
 	
@@ -184,7 +185,7 @@ class test_CORSProxy(unittest.TestCase):
 			('Transfer-Encoding', "Nothing"),
 			('Upgrade', "Dont"),
 		]
-		self.cp = CORSProxy('localhost', add_headers=hdr)
+		self.cp = Proxy('localhost', add_headers=hdr)
 		self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertEquals([], self.response.headers)
 	
@@ -199,20 +200,20 @@ class test_CORSProxy(unittest.TestCase):
 			('Transfer-Encoding', "Nothing"),
 			('Upgrade', "Dont"),
 		]
-		self.cp = CORSProxy('localhost', add_headers=hdr)
+		self.cp = Proxy('localhost', add_headers=hdr)
 		env = self.get_default_environ()
 		env['SERVER_SOFTWARE'] = "Not wsgiref"
 		self.cp(env, self.simulate_start_response)
 		self.assertEquals(hdr, self.response.headers)
 	
 	def test_added_ACAO_star_no_origin(self):
-		self.cp = CORSProxy('localhost', allow_from=True)
+		self.cp = Proxy('localhost', allow_from=True)
 		self.cp(self.get_default_environ(), self.simulate_start_response)
 		self.assertIn(("Access-Control-Allow-Origin", "*"), 
 			self.response.headers)
 	
 	def test_added_ACAO_False_origin(self):
-		self.cp = CORSProxy('localhost', allow_from=False)
+		self.cp = Proxy('localhost', allow_from=False)
 		env = self.get_default_environ()
 		env['ORIGIN'] = "my.domain"
 		self.cp(env, self.simulate_start_response)
@@ -220,7 +221,7 @@ class test_CORSProxy(unittest.TestCase):
 			self.response.headers)
 	
 	def test_added_ACAO_True_origin(self):
-		self.cp = CORSProxy('localhost', allow_from=True)
+		self.cp = Proxy('localhost', allow_from=True)
 		env = self.get_default_environ()
 		env['ORIGIN'] = "my.domain"
 		self.cp(env, self.simulate_start_response)
@@ -228,7 +229,7 @@ class test_CORSProxy(unittest.TestCase):
 			self.response.headers)
 	
 	def test_added_ACAO_star_origin(self):
-		self.cp = CORSProxy('localhost', allow_from="*")
+		self.cp = Proxy('localhost', allow_from="*")
 		env = self.get_default_environ()
 		env['ORIGIN'] = "my.domain"
 		self.cp(env, self.simulate_start_response)
@@ -236,7 +237,7 @@ class test_CORSProxy(unittest.TestCase):
 			self.response.headers)
 	
 	def test_ACAO_origin_list_match(self):
-		self.cp = CORSProxy('localhost', 
+		self.cp = Proxy('localhost', 
 			allow_from=["google.com", "my.domain", "microsoft.com"])
 		env = self.get_default_environ()
 		env['ORIGIN'] = "my.domain"
@@ -245,7 +246,7 @@ class test_CORSProxy(unittest.TestCase):
 			self.response.headers)
 	
 	def test_ACAO_origin_list_no_match(self):
-		self.cp = CORSProxy('localhost', 
+		self.cp = Proxy('localhost', 
 			allow_from=["google.com", "microsoft.com"])
 		env = self.get_default_environ()
 		env['ORIGIN'] = "my.domain"

@@ -14,7 +14,7 @@ banned_headers = [
 from wsgiproxy.exactproxy import proxy_exact_request
 from copy import deepcopy
 
-class CORSProxy:
+class Proxy:
 	"""A (relatively) sinple class to perform HTTP request proxying and add CORS
 	headers to the response.
 	
