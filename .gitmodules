@@ -1,0 +1,3 @@
+[submodule "CORSProxy"]
+	path = CORSProxy
+	url = git@github.com:spresse1/CORSProxy.git
