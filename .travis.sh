@@ -1,6 +1,8 @@
 #!/bin/bash
 
 EXIT_CODE=0
+TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
+
 trap catch_errors ERR;
 function catch_errors() {
   EXIT_CODE=$?
