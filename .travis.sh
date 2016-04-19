@@ -9,5 +9,6 @@ function catch_errors() {
 
 cd remote_thermo_measurement
 tox
+tox -e codacy-coverage-upload
 
 exit $EXIT_CODE
