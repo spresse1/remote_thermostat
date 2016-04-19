@@ -1,4 +1,4 @@
 sudo: false
 language: python
-install: pip install tox-travis coverage
+install: pip install tox-travis
 script: ./.travis.sh

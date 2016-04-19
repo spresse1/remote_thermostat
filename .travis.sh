@@ -10,15 +10,4 @@ function catch_errors() {
 cd remote_thermo_measurement
 tox
 
-if [ -n "${CODACY_PROJECT_TOKEN}" ]
-then
-	echo "Uploading coverage results to codacy..."
-	pip install codacy-coverage
-	pwd
-	ls
-	coverage xml
-        python-codacy-coverage -r coverage.xml
-fi
-cd ..
-
 exit $EXIT_CODE
