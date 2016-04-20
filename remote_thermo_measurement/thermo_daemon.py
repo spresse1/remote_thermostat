@@ -30,12 +30,18 @@ class test_Application(unittest.TestCase):
             connect()
 
 
+class mock_radiotherm:
+    def _construct_url(self, url_part):
+        return "http://10.0.0.21/" + url_part
+
+
 def setup_tests():
     ADC.read = mock.MagicMock(return_value=0.37)
     ADC.setup = mock.MagicMock()
     r = mock.Mock()
     r.text = "{ \"success\": 1}"
     requests.post = mock.MagicMock(return_value=r)
+    radiotherm.get_thermostat = mock.MagicMock(return_value=mock_radiotherm())
 
 tstat = None
 
