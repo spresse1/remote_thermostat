@@ -3,7 +3,6 @@ language: python
 #install: pip install tox-travis
 #script: ./.travis.sh
 env:
-  - TOXENV=py26
   - TOXENV=py27
   - TOXENV=pep8
   - TOXENV=pylint
