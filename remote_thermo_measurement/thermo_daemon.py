@@ -31,8 +31,10 @@ class test_Application(unittest.TestCase):
 
 
 class mock_radiotherm:
+    urlbase = "http://10.0.0.21/"
+
     def _construct_url(self, url_part):
-        return "http://10.0.0.21/" + url_part
+        return self.urlbase + url_part
 
 
 def setup_tests():
