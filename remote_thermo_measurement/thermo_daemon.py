@@ -1,14 +1,5 @@
 #! /usr/bin/env python
 
-import Adafruit_BBIO.ADC as ADC
-import time
-import radiotherm
-import requests
-import traceback
-import sys
-import unittest
-import mock
-
 """
 This is a daemon for "moving" where the thermostat measures temperature.  This
 is useful if you're like me and spend most of your time in a different room.
@@ -18,6 +9,15 @@ Based heavily on
 https://learn.adafruit.com/measuring-temperature-with-a-beaglebone-black?\
 view=all
 """
+
+import Adafruit_BBIO.ADC as ADC
+import time
+import radiotherm
+import requests
+import traceback
+import sys
+import unittest
+import mock
 
 calibration = 0
 decay_factor = .1
