@@ -49,7 +49,7 @@ tstat = None
 def connect():
     try:
         tstat = radiotherm.get_thermostat()
-    except Exception as e:
+    except Exception:
         print("Unable to connect to the thermostat:")
         traceback.print_exc()
         raise
@@ -79,14 +79,13 @@ def main(secs=30, run_once=False):
         print(data)
         r = requests.post(remote_url, data=data)
         print(r.text)
-        if run_once:
+        if run_once:  # pragma: no cover
             exit(0)
 
 if __name__ == "__main__":
-    from sys import argv
     run_once = False
     secs = 30
-    if sys.argv[1] == "testing":
+    if len(sys.argv) > 1 and sys.argv[1] == "testing":  # pragma: no cover
         run_once = True
         secs = 1
         setup_tests()
