@@ -1,3 +1,6 @@
 [submodule "CORSProxy"]
 	path = CORSProxy
 	url = https://github.com/spresse1/CORSProxy.git
+[submodule "web_interface/tests/casperjs"]
+	path = web_interface/tests/casperjs
+	url = https://github.com/casperjs/casperjs.git
