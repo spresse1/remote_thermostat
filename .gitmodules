@@ -4,3 +4,9 @@
 [submodule "web_interface/tests/casperjs"]
 	path = web_interface/tests/casperjs
 	url = https://github.com/casperjs/casperjs.git
+[submodule "web_interface/tests/istanbul"]
+	path = web_interface/tests/istanbul
+	url = https://github.com/gotwarlost/istanbul.git
+[submodule "web_interface/tests/qunit-phantomjs-runner"]
+	path = web_interface/tests/qunit-phantomjs-runner
+	url = https://github.com/jonkemp/qunit-phantomjs-runner.git
