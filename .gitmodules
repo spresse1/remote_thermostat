@@ -10,3 +10,6 @@
 [submodule "web_interface/tests/qunit-phantomjs-runner"]
 	path = web_interface/tests/qunit-phantomjs-runner
 	url = https://github.com/jonkemp/qunit-phantomjs-runner.git
+[submodule "web_interface/tests/karma"]
+	path = web_interface/tests/karma
+	url = https://github.com/karma-runner/karma.git
