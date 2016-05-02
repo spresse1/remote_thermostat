@@ -11,5 +11,5 @@ virtualenv .
 . bin/activate
 #pip install -r CORSProxy/requirements.txt -r CORSProxy/dev-requirements.txt -r dev-requirements.txt
 pip install -r dev-requirements.txt
-nodeenv -p -v
+#nodeenv -p -v
 cd "$WD"
