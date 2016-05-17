@@ -1,0 +1,11 @@
+[Unit]
+Description=Remote thermostat measurement for Radio Thermostat of America thermostats
+#Documentation=https://github.com/spresse1/remote_thermo_daemon
+After=networking
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/remote_thermo_daemon
+
+[Install]
+WantedBy=multi-user.target
