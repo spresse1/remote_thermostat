@@ -18,15 +18,18 @@ class test_Application(unittest.TestCase):
     def setUp(self):
         """Generic test setup. Just calls out to a generic setup function"""
         r = mock.Mock()
-        r.text = "{ \"success\": 1}"
+        r.text = "{ \"success\": 0}"
         thermo_daemon.requests.post = mock.MagicMock(return_value=r)
         thermo_daemon.radiotherm.get_thermostat = mock.MagicMock(
             return_value=thermo_daemon.mock_radiotherm())
-
-    @patch("thermo_daemon.ADC.read")
-    def test_readTemp(self, read):
-        """Test reading temperature from the mocked IO"""
+        p_read = patch('thermo_daemon.ADC.read')
+        read = p_read.start()
         read.return_value = 0.37
+        p_setup = patch('thermo_daemon.ADC.setup')
+        p_setup.start()
+
+    def test_readTemp(self):
+        """Test reading temperature from the mocked IO"""
         self.assertEqual(thermo_daemon.read_temp(), 61.88)
 
     def test_forceNoThermostat(self):
