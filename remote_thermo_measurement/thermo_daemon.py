@@ -15,7 +15,6 @@ import time
 import radiotherm
 import requests
 import traceback
-import sys
 import signal
 
 calibration = 0
@@ -56,7 +55,6 @@ def main(secs=30, run_once=False):
     run_once prevents the function from looping and is used in testing.
     """
     global tstat
-    global main_should_exit
     ADC.setup()
     tstat = connect()
     remote_url = tstat._construct_url('tstat/remote_temp')
@@ -83,10 +81,9 @@ def handle_exit(signum, frame):
     remote temperature data.
     """
     global tstat
-    global main_should_exit
     url = tstat._construct_url('tstat/remote_temp')
     data = "{\"remote_mode\": 0}"
-    r = requests.post(url, data=data)
+    requests.post(url, data=data)
     main_should_exit = True
 
 
