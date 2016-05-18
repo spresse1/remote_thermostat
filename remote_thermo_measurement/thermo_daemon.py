@@ -73,16 +73,18 @@ def main(secs=30, run_once=False):
         if run_once:  # pragma: no cover
             return
 
+
 def handle_exit(signum, frame):
-	"""
-	Handles shutdown by notifying the thermostat we no longer will be sending
-	remote temperature data.
-	"""
-	global tstat
-	url = tstat._construct_url('tstat/remote_temp')
-	data = "{\"remote_mode\": 0}"
-	r = requests.post(url, data=data)
-	sys.exit(0)
+    """
+    Handles shutdown by notifying the thermostat we no longer will be sending
+    remote temperature data.
+    """
+    global tstat
+    url = tstat._construct_url('tstat/remote_temp')
+    data = "{\"remote_mode\": 0}"
+    r = requests.post(url, data=data)
+    sys.exit(0)
+
 
 class mock_radiotherm:
     """A mock of the radiotherm module for testing"""
