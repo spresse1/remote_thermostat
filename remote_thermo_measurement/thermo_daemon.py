@@ -58,6 +58,7 @@ def main(secs=30, run_once=False):
     ADC.setup()
     tstat = connect()
     remote_url = tstat._construct_url('tstat/remote_temp')
+    signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
     avgtemp = read_temp()
     while True:
@@ -81,6 +82,7 @@ def handle_exit(signum, frame):
     remote temperature data.
     """
     global main_should_exit
+    print "Recieved signal %d, exiting" % signum
     url = tstat._construct_url('tstat/remote_temp')
     data = "{\"remote_mode\": 0}"
     requests.post(url, data=data)

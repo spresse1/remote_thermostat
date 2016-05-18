@@ -51,8 +51,9 @@ class test_Application(unittest.TestCase):
 
     def test_exitOnSIGTERM(self):
         """Tests that the handler for SIGTERM functions correctly."""
+        from signal import SIGTERM
         thermo_daemon.main(1, True)
-        thermo_daemon.handle_exit(None, None)
+        thermo_daemon.handle_exit(SIGTERM, None)
         thermo_daemon.requests.post.assert_called_with(
             "http://10.0.0.21/tstat/remote_temp",
             data="{\"remote_mode\": 0}"
