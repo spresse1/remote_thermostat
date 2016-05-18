@@ -5,30 +5,24 @@ import unittest
 import thermo_daemon
 from mock import patch
 
+
 class test_Application(unittest.TestCase):
     """
     A series of simple tests to validate that this deamon works as intended.
     """
-    
+
     def setUp(self):
         """Generic test setup. Just calls out to a generic setup function"""
-        #adc.read = mock.MagicMock(return_value=0.37)
-        #adc,.setup = mock.MagicMock()
-        p_setup = patch('thermo_daemon.ADC.read')
-        self.addCleanup(p_setup.stop)
-        self.setup = p_setup.start()
-        self.setup = mock.MagicMock(return_value=0.37)
-        #self.setup.setup = mock.MagicMock()
-
         r = mock.Mock()
         r.text = "{ \"success\": 1}"
         thermo_daemon.requests.post = mock.MagicMock(return_value=r)
-        thermo_daemon.radiotherm.get_thermostat = mock.MagicMock(return_value=mock_radiotherm())
+        thermo_daemon.radiotherm.get_thermostat = mock.MagicMock(
+            return_value=mock_radiotherm())
 
     @patch("thermo_daemon.ADC.read")
     def test_readTemp(self, read):
         """Test reading temperature from the mocked IO"""
-        read.return_value=0.37
+        read.return_value = 0.37
         self.assertEqual(thermo_daemon.read_temp(), 61.88)
 
     def test_forceNoThermostat(self):
@@ -49,5 +43,5 @@ class mock_radiotherm:
         return self.urlbase + url_part
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     unittest.main()

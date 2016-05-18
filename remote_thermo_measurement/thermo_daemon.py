@@ -79,7 +79,7 @@ if __name__ == "__main__":
         from mock import patch
         p_read = patch('thermo_daemon.ADC.read')
         read = p_read.start()
-        read.return_value=0.37
+        read.return_value = 0.37
         p_setup = patch('thermo_daemon.ADC.setup')
         read = p_setup.start()
     main(secs, run_once)
