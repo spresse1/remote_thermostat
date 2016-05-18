@@ -70,16 +70,32 @@ def main(secs=30, run_once=False):
         if run_once:  # pragma: no cover
             exit(0)
 
+
+class mock_radiotherm:
+    """A mock of the radiotherm module for testing"""
+    urlbase = "http://10.0.0.21/"
+
+    def _construct_url(self, url_part):
+        """Returns the "url" to the thermostat."""
+        return self.urlbase + url_part
+
+
 if __name__ == "__main__":
     run_once = False
     secs = 30
     if len(sys.argv) > 1 and sys.argv[1] == "testing":  # pragma: no cover
         run_once = True
         secs = 1
+        import mock
         from mock import patch
         p_read = patch('thermo_daemon.ADC.read')
         read = p_read.start()
         read.return_value = 0.37
         p_setup = patch('thermo_daemon.ADC.setup')
         read = p_setup.start()
+        r = mock.Mock()
+        r.text = "{ \"success\": 1}"
+        requests.post = mock.MagicMock(return_value=r)
+        radiotherm.get_thermostat = mock.MagicMock(
+            return_value=mock_radiotherm())
     main(secs, run_once)

@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+"""
+Tests for the thermo_daemon.py daemon.
+"""
+
 import mock
 import unittest
 import thermo_daemon
@@ -17,7 +21,7 @@ class test_Application(unittest.TestCase):
         r.text = "{ \"success\": 1}"
         thermo_daemon.requests.post = mock.MagicMock(return_value=r)
         thermo_daemon.radiotherm.get_thermostat = mock.MagicMock(
-            return_value=mock_radiotherm())
+            return_value=thermo_daemon.mock_radiotherm())
 
     @patch("thermo_daemon.ADC.read")
     def test_readTemp(self, read):
@@ -32,15 +36,6 @@ class test_Application(unittest.TestCase):
         )
         with self.assertRaises(IOError):
             thermo_daemon.connect()
-
-
-class mock_radiotherm:
-    """A mock of the radiotherm module for testing"""
-    urlbase = "http://10.0.0.21/"
-
-    def _construct_url(self, url_part):
-        """Returns the "url" to the thermostat."""
-        return self.urlbase + url_part
 
 
 if __name__ == "__main__":
