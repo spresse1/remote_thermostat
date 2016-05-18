@@ -40,6 +40,16 @@ class test_Application(unittest.TestCase):
         with self.assertRaises(IOError):
             thermo_daemon.connect()
 
+    @patch("sys.exit")
+    def test_exitOnSIGTERM(self, exit):
+        """Tests that the handler for SIGTERM functions correctly."""
+        thermo_daemon.main(1, True)
+        thermo_daemon.handle_exit(None, None)
+        thermo_daemon.requests.post.assert_called_with(
+            "http://10.0.0.21/tstat/remote_temp",
+            data="{\"remote_mode\": 0}"
+        )
+        exit.assert_called_with(0)
 
 if __name__ == "__main__":
     unittest.main()

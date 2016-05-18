@@ -16,6 +16,7 @@ import radiotherm
 import requests
 import traceback
 import sys
+import signal
 
 calibration = 0
 decay_factor = .1
@@ -52,9 +53,11 @@ def main(secs=30, run_once=False):
     and how often the temperature is reported to the thermostat.
     run_once prevents the function from looping and is used in testing.
     """
+    global tstat
     ADC.setup()
     tstat = connect()
     remote_url = tstat._construct_url('tstat/remote_temp')
+    signal.signal(signal.SIGTERM, handle_exit)
     avgtemp = read_temp()
     while True:
         i = 0
@@ -68,8 +71,18 @@ def main(secs=30, run_once=False):
         r = requests.post(remote_url, data=data)
         print(r.text)
         if run_once:  # pragma: no cover
-            exit(0)
+            return
 
+def handle_exit(signum, frame):
+	"""
+	Handles shutdown by notifying the thermostat we no longer will be sending
+	remote temperature data.
+	"""
+	global tstat
+	url = tstat._construct_url('tstat/remote_temp')
+	data = "{\"remote_mode\": 0}"
+	r = requests.post(url, data=data)
+	sys.exit(0)
 
 class mock_radiotherm:
     """A mock of the radiotherm module for testing"""
