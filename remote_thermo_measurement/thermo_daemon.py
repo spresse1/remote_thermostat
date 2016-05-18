@@ -76,8 +76,9 @@ def main(secs=30, run_once=False):
         print(r.text)
         if run_once or main_should_exit:  # pragma: no cover
             break
-    data = "{\"remote_mode\": 0}"
+    data = "{\"rem_mode\": 0}"
     print data
+    print "Main is exiting"
     requests.post(remote_url, data=data)
 
 

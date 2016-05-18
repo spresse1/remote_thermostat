@@ -57,7 +57,7 @@ class test_Application(unittest.TestCase):
         thermo_daemon.handle_exit(SIGTERM, None)
         thermo_daemon.requests.post.assert_called_with(
             "http://10.0.0.21/tstat/remote_temp",
-            data="{\"remote_mode\": 0}"
+            data="{\"rem_mode\": 0}"
         )
 
     @patch("signal.signal")
@@ -75,7 +75,7 @@ class test_Application(unittest.TestCase):
                     data="{\"rem_temp\": 61.880000 }"),
                 call(
                     "http://10.0.0.21/tstat/remote_temp",
-                    data="{\"remote_mode\": 0}"),
+                    data="{\"rem_mode\": 0}"),
             ]
         )
         from signal import SIGTERM
