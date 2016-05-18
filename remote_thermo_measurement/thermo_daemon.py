@@ -25,6 +25,8 @@ sensor_pin = 'P9_40'
 
 tstat = None
 
+main_should_exit = False
+
 
 def connect():
     """Connect to the thermostat.  Returns a radiotherm object"""
@@ -54,6 +56,7 @@ def main(secs=30, run_once=False):
     run_once prevents the function from looping and is used in testing.
     """
     global tstat
+    global main_should_exit
     ADC.setup()
     tstat = connect()
     remote_url = tstat._construct_url('tstat/remote_temp')
@@ -70,7 +73,7 @@ def main(secs=30, run_once=False):
         print(data)
         r = requests.post(remote_url, data=data)
         print(r.text)
-        if run_once:  # pragma: no cover
+        if run_once or main_should_exit:  # pragma: no cover
             return
 
 
@@ -80,37 +83,14 @@ def handle_exit(signum, frame):
     remote temperature data.
     """
     global tstat
+    global main_should_exit
     url = tstat._construct_url('tstat/remote_temp')
     data = "{\"remote_mode\": 0}"
     r = requests.post(url, data=data)
-    sys.exit(0)
+    main_should_exit = True
 
 
-class mock_radiotherm:
-    """A mock of the radiotherm module for testing"""
-    urlbase = "http://10.0.0.21/"
-
-    def _construct_url(self, url_part):
-        """Returns the "url" to the thermostat."""
-        return self.urlbase + url_part
-
-
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     run_once = False
     secs = 30
-    if len(sys.argv) > 1 and sys.argv[1] == "testing":  # pragma: no cover
-        run_once = True
-        secs = 1
-        import mock
-        from mock import patch
-        p_read = patch('thermo_daemon.ADC.read')
-        read = p_read.start()
-        read.return_value = 0.37
-        p_setup = patch('thermo_daemon.ADC.setup')
-        read = p_setup.start()
-        r = mock.Mock()
-        r.text = "{ \"success\": 1}"
-        requests.post = mock.MagicMock(return_value=r)
-        radiotherm.get_thermostat = mock.MagicMock(
-            return_value=mock_radiotherm())
     main(secs, run_once)
