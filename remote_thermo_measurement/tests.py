@@ -8,6 +8,7 @@ import mock
 import unittest
 import thermo_daemon
 from mock import patch
+from mock import call
 
 
 class mock_radiotherm:
@@ -67,9 +68,15 @@ class test_Application(unittest.TestCase):
         thermo_daemon.main(1, True)
         self.setup.assert_called()
         self.read.assert_called()
-        thermo_daemon.requests.post.assert_called_with(
-            "http://10.0.0.21/tstat/remote_temp",
-            data="{\"rem_temp\": 61.880000 }"
+        thermo_daemon.requests.post.assert_has_calls(
+            [
+                call(
+                    "http://10.0.0.21/tstat/remote_temp",
+                    data="{\"rem_temp\": 61.880000 }"),
+                call(
+                    "http://10.0.0.21/tstat/remote_temp",
+                    data="{\"remote_mode\": 0}"),
+            ]
         )
         from signal import SIGTERM
         signal.assert_called_with(SIGTERM, thermo_daemon.handle_exit)

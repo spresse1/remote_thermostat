@@ -73,6 +73,8 @@ def main(secs=30, run_once=False):
         r = requests.post(remote_url, data=data)
         print(r.text)
         if run_once or main_should_exit:  # pragma: no cover
+            data = "{\"remote_mode\": 0}"
+            requests.post(remote_url, data=data)
             return
 
 
@@ -83,9 +85,6 @@ def handle_exit(signum, frame):
     """
     global main_should_exit
     print "Recieved signal %d, exiting" % signum
-    url = tstat._construct_url('tstat/remote_temp')
-    data = "{\"remote_mode\": 0}"
-    requests.post(url, data=data)
     main_should_exit = True
 
 
