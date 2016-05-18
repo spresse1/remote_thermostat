@@ -16,55 +16,11 @@ import radiotherm
 import requests
 import traceback
 import sys
-import unittest
-import mock
 
 calibration = 0
 decay_factor = .1
 
 sensor_pin = 'P9_40'
-
-
-class test_Application(unittest.TestCase):
-    """
-    A series of simple tests to validate that this deamon works as intended.
-    """
-    def setUp(self):
-        """Generic test setup. Just calls out to a generic setup function"""
-        setup_tests()
-
-    def test_readTemp(self):
-        """Test reading temperature from the mocked IO"""
-        self.assertEqual(read_temp(), 61.88)
-
-    def test_forceNoThermostat(self):
-        """Tests the behavior if the thermostat can't be found"""
-        radiotherm.get_thermostat = mock.MagicMock(
-            side_effect=IOError()
-        )
-        with self.assertRaises(IOError):
-            connect()
-
-
-class mock_radiotherm:
-    """A mock of the radiotherm module for testing"""
-    urlbase = "http://10.0.0.21/"
-
-    def _construct_url(self, url_part):
-        """Returns the "url" to the thermostat."""
-        return self.urlbase + url_part
-
-
-def setup_tests():
-    """
-    Sets up testing by mocking out many of the imported modules.
-    """
-    ADC.read = mock.MagicMock(return_value=0.37)
-    ADC.setup = mock.MagicMock()
-    r = mock.Mock()
-    r.text = "{ \"success\": 1}"
-    requests.post = mock.MagicMock(return_value=r)
-    radiotherm.get_thermostat = mock.MagicMock(return_value=mock_radiotherm())
 
 tstat = None
 
@@ -120,5 +76,10 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "testing":  # pragma: no cover
         run_once = True
         secs = 1
-        setup_tests()
+        from mock import patch
+        p_read = patch('thermo_daemon.ADC.read')
+        read = p_read.start()
+        read.return_value=0.37
+        p_setup = patch('thermo_daemon.ADC.setup')
+        read = p_setup.start()
     main(secs, run_once)
