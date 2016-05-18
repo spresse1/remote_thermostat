@@ -68,14 +68,17 @@ def main(secs=30, run_once=False):
                 (decay_factor * read_temp())
             i = i+1
             time.sleep(1)
+            if main_should_exit:
+                break
         data = "{\"rem_temp\": %02f }" % (avgtemp)
         print(data)
         r = requests.post(remote_url, data=data)
         print(r.text)
         if run_once or main_should_exit:  # pragma: no cover
-            data = "{\"remote_mode\": 0}"
-            requests.post(remote_url, data=data)
-            return
+            break
+    data = "{\"remote_mode\": 0}"
+    print data
+    requests.post(remote_url, data=data)
 
 
 def handle_exit(signum, frame):
