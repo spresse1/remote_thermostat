@@ -80,7 +80,7 @@ def handle_exit(signum, frame):
     Handles shutdown by notifying the thermostat we no longer will be sending
     remote temperature data.
     """
-    global tstat
+    global main_should_exit
     url = tstat._construct_url('tstat/remote_temp')
     data = "{\"remote_mode\": 0}"
     requests.post(url, data=data)
