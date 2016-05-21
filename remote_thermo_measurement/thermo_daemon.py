@@ -82,7 +82,7 @@ def main(secs=30, run_once=False):
                 (decay_factor * read_temp())
             i = i+1
             time.sleep(1)
-            if main_should_exit: # pragma: no cover
+            if main_should_exit:  # pragma: no cover
                 break
         data = "{\"rem_temp\": %.2f }" % (avgtemp)
         logging.debug("Payload to the server is: %s", data)
