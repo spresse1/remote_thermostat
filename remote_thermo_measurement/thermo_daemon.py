@@ -15,7 +15,6 @@ import time
 import radiotherm
 import requests
 import signal
-import socket
 import logging
 from traceback import format_exc
 

@@ -9,7 +9,6 @@ import unittest
 import thermo_daemon
 from mock import patch
 from mock import call
-from mock import MagicMock
 
 
 class mock_radiotherm:
