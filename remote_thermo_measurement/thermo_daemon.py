@@ -16,6 +16,7 @@ import radiotherm
 import requests
 import traceback
 import signal
+import socket
 
 calibration = 0
 decay_factor = .1
@@ -31,7 +32,7 @@ def connect():
     """Connect to the thermostat.  Returns a radiotherm object"""
     try:
         tstat = radiotherm.get_thermostat()
-    except Exception:
+    except Exception, socket.error:
         print("Unable to connect to the thermostat:")
         traceback.print_exc()
         raise
