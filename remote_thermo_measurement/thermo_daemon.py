@@ -79,7 +79,6 @@ def main(read_freq=1, send_freq=30, run_once=False):
     signal.signal(signal.SIGTERM, handle_exit)
     avgtemp = read_temp()
     reads = 1
-    # TODO: rewrite this loop to be an ACTUAL running average
     while not main_should_exit:
         # Perform the read and facotr into the average
         avgtemp = ((1 - decay_factor) * avgtemp) + \
