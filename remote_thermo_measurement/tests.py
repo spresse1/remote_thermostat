@@ -54,7 +54,7 @@ class test_Application(unittest.TestCase):
         self.read.return_value = 0.37
         p_setup = patch('thermo_daemon.ADC.setup')
         self.setup = p_setup.start()
-        p_logging = patch('thermo_daemon.logging')
+        p_logging = patch('thermo_daemon.logger')
         self.logging = p_logging.start()
 
     def test_readTemp(self):
