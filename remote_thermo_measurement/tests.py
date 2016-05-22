@@ -124,7 +124,7 @@ class test_Application(unittest.TestCase):
         self.logging.critical.assert_has_calls([
             call("Attempting to start the BBB GPIO library failed.  This can "
                  "be due to a number of things, including:"),
-            call("- Too new a kernel (Adafruit BBIO runs on 3.8.13.  "
+            call("- Too new a kernel.  Adafruit BBIO runs on 3.8.13.  "
                  "Downgrades to the version this is tested with can be done "
                  "easily via:"),
             call("  apt-get install linux-{image,headers}-3.8.13-bone79"),

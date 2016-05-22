@@ -68,7 +68,7 @@ def setup():
             "due to a number of things, including:"
         )
         logger.critical(
-            "- Too new a kernel (Adafruit BBIO runs on 3.8.13.  Downgrades "
+            "- Too new a kernel.  Adafruit BBIO runs on 3.8.13.  Downgrades "
             "to the version this is tested with can be done easily via:")
         logger.critical(
             "  apt-get install linux-{image,headers}-3.8.13-bone79")
@@ -88,7 +88,7 @@ def main(tstat, read_freq=1, send_freq=30, run_once=False):
     """
     Main daemon function.
 
-    read_freq is how long the program shoudl wait between reads, in seconds.
+    read_freq is how long the program should wait between reads, in seconds.
     send_freq is how many read cycles should occur before data is sent.
     run_once prevents the function from looping and is used in testing.
     """
@@ -134,4 +134,4 @@ def handle_exit(signum, frame):
 if __name__ == "__main__":  # pragma: no cover
     run_once = False
     secs = 30
-    main(secs, run_once)
+    main(secs, run_once)  # TODO: Catch up to new function prototype.
