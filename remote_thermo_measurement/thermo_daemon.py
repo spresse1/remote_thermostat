@@ -18,9 +18,6 @@ import signal
 import logging
 from traceback import format_exc
 
-logging.basicConfig(level=logging.DEBUG)
-print("Logging set up")
-
 calibration = 0
 decay_factor = .1
 
