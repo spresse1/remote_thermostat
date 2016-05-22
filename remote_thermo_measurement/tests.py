@@ -47,6 +47,7 @@ class test_Application(unittest.TestCase):
         r.text = "{ \"success\": 0 }"
         r.status_code = 200
         thermo_daemon.requests.post = mock.MagicMock(return_value=r)
+        self.tstat = mock_radiotherm()
         thermo_daemon.radiotherm.get_thermostat = mock.MagicMock(
             return_value=mock_radiotherm())
         p_read = patch('thermo_daemon.ADC.read')
@@ -100,37 +101,51 @@ class test_Application(unittest.TestCase):
             call("Unable to connect to the thermostat:")
         ])
 
-    def test_exitOnSIGTERM(self):
-        """Tests that the handler for SIGTERM functions correctly."""
+    @patch('signal.signal')
+    def test_setup(self, signal):
+        """Tests that setup functions as expected under normal conditions"""
         from signal import SIGTERM
-        from threading import Thread
-        t = Thread(target=main_signal)
-        t.start()
-        thermo_daemon.main(send_freq=1)
-        #  We don't really care what main did, reset
-        #  the mock and continue
-        self.logging.reset_mock()
-        thermo_daemon.handle_exit(SIGTERM, None)
-        thermo_daemon.requests.post.assert_called_with(
-            "http://10.0.0.21/tstat/remote_temp",
-            data="{\"rem_mode\": 0}"
-        )
-        self.logging.info.assert_called_once_with(
-            "Recieved signal %d, sending exit signal",
-            SIGTERM
-        )
+        main = patch('thermo_daemon.main')
+        main.start()
+        thermo_daemon.setup()
+        self.logging.debug.assert_has_calls([
+            call("Setting up ADC"),
+            call("Attaching signal handlers"),
+            call("Running main loop"),
+        ])
+        self.setup.assert_called()
+        signal.assert_called_with(SIGTERM, thermo_daemon.handle_exit)
 
-    @patch("signal.signal")
-    def test_main(self, signal):
+    def test_setup_ADC_RuntimeException(self):
+        """Tests that we properly show an error message if the adafruit BBIO
+        library fails to initalize"""
+        self.setup.side_effect = RuntimeError(BBIO_SETUP_ERROR)
+        thermo_daemon.setup()
+        self.logging.critical.assert_has_calls([
+            call("Attempting to start the BBB GPIO library failed.  This can "
+                 "be due to a number of things, including:"),
+            call("- Too new a kernel (Adafruit BBIO runs on 3.8.13.  "
+                 "Downgrades to the version this is tested with can be done "
+                 "easily via:"),
+            call("  apt-get install linux-{image,headers}-3.8.13-bone79"),
+            call("- Not running on a BBB"),
+            call("- Conflicting capes"),
+            call("Raw exception: %s", BBIO_SETUP_ERROR),
+        ])
+
+    def test_main(self):
         """Tests the main function.  Forks off a new thread, then uses the
         signal handler to kill it.
         """
+        import signal
+        from signal import SIGTERM
         from sys import argv
         from threading import Thread
+        signal.signal(signal.SIGINT, thermo_daemon.handle_exit)
+        signal.signal(signal.SIGTERM, thermo_daemon.handle_exit)
         t = Thread(target=main_signal)
         t.start()
-        thermo_daemon.main(send_freq=2)
-        self.setup.assert_called()
+        thermo_daemon.main(self.tstat, send_freq=2)
         self.read.assert_called()
         thermo_daemon.requests.post.assert_has_calls(
             [
@@ -142,8 +157,6 @@ class test_Application(unittest.TestCase):
                     data="{\"rem_mode\": 0}"),
             ]
         )
-        from signal import SIGTERM
-        signal.assert_called_with(SIGTERM, thermo_daemon.handle_exit)
         self.logging.info.assert_has_calls([
             call("%s starting up!", argv[0]),
             call('Recieved signal %d, sending exit signal', SIGTERM),
@@ -157,34 +170,27 @@ class test_Application(unittest.TestCase):
                 "Deactivating remote temperature with payload %s",
                 '{"rem_mode": 0}'
             ),
-        ])
+        ], any_order=True)
 
-    def test_main_ADC_RuntimeException(self):
-        """Tests that we properly show an error message if the adafruit BBIO
-        library fails to initalize"""
-        self.setup.side_effect = RuntimeError(BBIO_SETUP_ERROR)
-        thermo_daemon.main()
-        self.logging.critical.assert_has_calls([
-            call("Attempting to start the BBB GPIO library failed.  This can "
-                 "be due to a number of things, including:"),
-            call("- Too new a kernel (Adafruit BBIO runs on 3.8.13.  "
-                 "Downgrades to the version this is tested with can be done "
-                 "easily via:"),
-            call("  apt-get install linux-{image,headers}-3.8.13-bone79"),
-            call("- Not running on a BBB"),
-            call("- Conflicting capes"),
-            call("Raw exception: %s", BBIO_SETUP_ERROR),
-        ])
+    def test_exitOnSIGTERM(self):
+        """Tests that the handler for SIGTERM functions correctly."""
+        from signal import SIGTERM
+        from threading import Thread
+        thermo_daemon.handle_exit(SIGTERM, None)
+        self.assertEqual(True, thermo_daemon.main_should_exit)
 
     def test_main_HTTP_400(self):
         """Test that we properly throw a warning on HTTP 400+"""
+        import signal
         r = thermo_daemon.requests.post.return_value  # Mock request object
         r.text = "Not found"
         r.status_code = 400
         from threading import Thread
+        signal.signal(signal.SIGINT, thermo_daemon.handle_exit)
+        signal.signal(signal.SIGTERM, thermo_daemon.handle_exit)
         t = Thread(target=main_signal)
         t.start()
-        thermo_daemon.main(send_freq=2)
+        thermo_daemon.main(self.tstat, send_freq=2)
         self.logging.warning.assert_any_call(
             "Server returned an HTTP error code (%d): %s",
             r.status_code, r.text

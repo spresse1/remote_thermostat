@@ -23,8 +23,6 @@ decay_factor = .1
 
 sensor_pin = 'P9_40'
 
-tstat = None
-
 logger = logging.getLogger(__name__)
 
 """Set to true to signal the main process to exit."""
@@ -59,19 +57,8 @@ def read_temp():
     return temp_f
 
 
-def main(read_freq=1, send_freq=30, run_once=False):
-    """
-    Main daemon function.
-
-    read_freq is how long the program shoudl wait between reads, in seconds.
-    send_freq is how many read cycles should occur before data is sent.
-    run_once prevents the function from looping and is used in testing.
-    """
-    from sys import argv
-    global tstat
-    global main_should_exit
-    main_should_exit = False
-    logger.info("%s starting up!", argv[0])
+def setup():
+    logger.debug("Setting up ADC")
     try:
         ADC.setup()
     except RuntimeError as e:
@@ -89,9 +76,26 @@ def main(read_freq=1, send_freq=30, run_once=False):
         logger.critical("Raw exception: %s", str(e))
         return
     tstat = connect()  # TODO: retries
-    remote_url = tstat._construct_url('tstat/remote_temp')
+    logger.debug("Attaching signal handlers")
     signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
+    logger.debug("Running main loop")
+    main(tstat)
+
+
+def main(tstat, read_freq=1, send_freq=30, run_once=False):
+    """
+    Main daemon function.
+
+    read_freq is how long the program shoudl wait between reads, in seconds.
+    send_freq is how many read cycles should occur before data is sent.
+    run_once prevents the function from looping and is used in testing.
+    """
+    from sys import argv
+    logger.info("%s starting up!", argv[0])
+    global main_should_exit
+    main_should_exit = False
+    remote_url = tstat._construct_url('tstat/remote_temp')
     avgtemp = read_temp()
     reads = 1
     while not main_should_exit:
@@ -113,6 +117,7 @@ def main(read_freq=1, send_freq=30, run_once=False):
     logger.warning("Caught exit signal, exiting.")
     logger.debug("Deactivating remote temperature with payload %s", data)
     requests.post(remote_url, data=data)
+    return
 
 
 def handle_exit(signum, frame):
