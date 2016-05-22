@@ -69,7 +69,22 @@ def main(read_freq=1, send_freq=30, run_once=False):
     global main_should_exit
     main_should_exit = False
     logging.info("%s starting up!", argv[0])
-    ADC.setup()  # TODO: try-catch on the RuntimeError this can throw.
+    try:
+        ADC.setup()
+    except RuntimeError as e:
+        logging.critical(
+            "Attempting to start the BBB GPIO library failed.  This can be "
+            "due to a number of things, including:"
+        )
+        logging.critical(
+            "- Too new a kernel (Adafruit BBIO runs on 3.8.13.  Downgrades "
+            "to the version this is tested with can be done easily via:")
+        logging.critical(
+            "  apt-get install linux-{image,headers}-3.8.13-bone79")
+        logging.critical("- Not running on a BBB")
+        logging.critical("- Conflicting capes")
+        logging.critical("Raw exception: %s", str(e))
+        return
     tstat = connect()
     remote_url = tstat._construct_url('tstat/remote_temp')
     signal.signal(signal.SIGINT, handle_exit)

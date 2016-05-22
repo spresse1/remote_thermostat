@@ -10,6 +10,11 @@ import thermo_daemon
 from mock import patch
 from mock import call
 
+BBIO_SETUP_ERROR = """Unable to setup ADC system. Possible causes are:
+  - A cape with a conflicting pin mapping is loaded
+  - A device tree object is loaded that uses the same name for a fragment: \
+helper"""
+
 
 class mock_radiotherm:
     """A mock of the radiotherm module for testing"""
@@ -85,9 +90,6 @@ class test_Application(unittest.TestCase):
 
     def test_exitOnSIGTERM(self):
         """Tests that the handler for SIGTERM functions correctly."""
-        # TODO - this maybe needs a version where the signal is actually sent?
-        # would require rewriting portions of main - signal handlers can only
-        # be installed in the main thread.
         from signal import SIGTERM
         from threading import Thread
         t = Thread(target=self.main_signal)
@@ -151,6 +153,23 @@ class test_Application(unittest.TestCase):
                 "Deactivating remote temperature with payload %s",
                 '{"rem_mode": 0}'
             ),
+        ])
+
+    def test_main_ADC_RuntimeException(self):
+        """Tests that we properly show an error message if the adafruit BBIO
+        library fails to initalize"""
+        self.setup.side_effect = RuntimeError(BBIO_SETUP_ERROR)
+        thermo_daemon.main()
+        self.logging.critical.assert_has_calls([
+            call("Attempting to start the BBB GPIO library failed.  This can "
+                 "be due to a number of things, including:"),
+            call("- Too new a kernel (Adafruit BBIO runs on 3.8.13.  "
+                 "Downgrades to the version this is tested with can be done "
+                 "easily via:"),
+            call("  apt-get install linux-{image,headers}-3.8.13-bone79"),
+            call("- Not running on a BBB"),
+            call("- Conflicting capes"),
+            call("Raw exception: %s", BBIO_SETUP_ERROR),
         ])
 
 if __name__ == "__main__":
