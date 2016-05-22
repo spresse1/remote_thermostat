@@ -18,6 +18,9 @@ import signal
 import logging
 from traceback import format_exc
 
+logging.basicConfig(level=logging.DEBUG)
+print("Logging set up")
+
 calibration = 0
 decay_factor = .1
 
@@ -56,16 +59,18 @@ def read_temp():
     return temp_f
 
 
-def main(secs=30, run_once=False):
+def main(read_freq=1, send_freq=30, run_once=False):
     """
     Main daemon function.
 
-    secs is the number of seconds over which a running average should be kept
-    and how often the temperature is reported to the thermostat.
+    read_freq is how long the program shoudl wait between reads, in seconds.
+    send_freq is how many read cycles should occur before data is sent.
     run_once prevents the function from looping and is used in testing.
     """
     from sys import argv
     global tstat
+    global main_should_exit
+    main_should_exit = False
     logging.info("%s starting up!", argv[0])
     ADC.setup()  # TODO: try-catch on the RuntimeError this can throw.
     tstat = connect()
@@ -73,23 +78,20 @@ def main(secs=30, run_once=False):
     signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
     avgtemp = read_temp()
+    reads = 1
     # TODO: rewrite this loop to be an ACTUAL running average
-    while True:
-        i = 0
-        while i < secs:
-            avgtemp = ((1 - decay_factor) * avgtemp) + \
-                (decay_factor * read_temp())
-            i = i+1
-            time.sleep(1)
-            if main_should_exit:  # pragma: no cover
-                break
-        data = "{\"rem_temp\": %.2f }" % (avgtemp)
-        logging.debug("Payload to the server is: %s", data)
-        r = requests.post(remote_url, data=data)
-        logging.debug("Server responded: %s", r.text)
-        # TODO: actually check the response
-        if run_once or main_should_exit:  # pragma: no cover
-            break
+    while not main_should_exit:
+        # Perform the read and facotr into the average
+        avgtemp = ((1 - decay_factor) * avgtemp) + \
+            (decay_factor * read_temp())
+        reads = (reads + 1) % send_freq
+        if reads == 0:
+            data = "{\"rem_temp\": %.2f }" % (avgtemp)
+            logging.debug("Payload to the server is: %s", data)
+            r = requests.post(remote_url, data=data)
+            logging.debug("Server responded: %s", r.text)
+            # TODO: actually check the response
+        time.sleep(read_freq)
     data = "{\"rem_mode\": 0}"
     logging.warning("Caught exit signal, exiting.")
     logging.debug("Deactivating remote temperature with payload %s", data)
@@ -101,9 +103,11 @@ def handle_exit(signum, frame):
     Handles shutdown by notifying the thermostat we no longer will be sending
     remote temperature data.
     """
+    #from thread import interrupt_main
     global main_should_exit
     logging.info("Recieved signal %d, sending exit signal", signum)
     main_should_exit = True
+    #interrupt_main()
 
 
 if __name__ == "__main__":  # pragma: no cover

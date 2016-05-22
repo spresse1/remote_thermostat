@@ -89,7 +89,10 @@ class test_Application(unittest.TestCase):
         # would require rewriting portions of main - signal handlers can only
         # be installed in the main thread.
         from signal import SIGTERM
-        thermo_daemon.main(1, True)
+        from threading import Thread
+        t = Thread(target=self.main_signal)
+        t.start()
+        thermo_daemon.main(send_freq=1)
         #  We don't really care what main did, reset
         #  the mock and continue
         self.logging.reset_mock()
@@ -103,13 +106,25 @@ class test_Application(unittest.TestCase):
             SIGTERM
         )
 
+    def main_signal(self):
+        import os
+        from time import sleep
+        import signal
+        sleep(5)
+        os.kill(os.getpid(), signal.SIGTERM)
+        return
+        
+
     @patch("signal.signal")
     def test_main(self, signal):
         """Tests the main function.  Forks off a new thread, then uses the
         signal handler to kill it.
         """
         from sys import argv
-        thermo_daemon.main(3, True)
+        from threading import Thread
+        t = Thread(target=self.main_signal)
+        t.start()
+        thermo_daemon.main(send_freq=1)
         self.setup.assert_called()
         self.read.assert_called()
         thermo_daemon.requests.post.assert_has_calls(
@@ -124,7 +139,10 @@ class test_Application(unittest.TestCase):
         )
         from signal import SIGTERM
         signal.assert_called_with(SIGTERM, thermo_daemon.handle_exit)
-        self.logging.info.assert_called_with("%s starting up!", argv[0])
+        self.logging.info.assert_has_calls([
+            call("%s starting up!", argv[0]),
+            call('Recieved signal %d, sending exit signal', SIGTERM),
+        ])
         self.logging.warning.assert_called_with("Caught exit signal, exiting.")
         self.logging.debug.assert_has_calls([
             call('Read a temperature of %.2f', 61.88),
