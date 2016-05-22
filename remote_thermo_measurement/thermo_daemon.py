@@ -99,11 +99,9 @@ def handle_exit(signum, frame):
     Handles shutdown by notifying the thermostat we no longer will be sending
     remote temperature data.
     """
-    #from thread import interrupt_main
     global main_should_exit
     logging.info("Recieved signal %d, sending exit signal", signum)
     main_should_exit = True
-    #interrupt_main()
 
 
 if __name__ == "__main__":  # pragma: no cover

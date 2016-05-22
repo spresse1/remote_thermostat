@@ -113,7 +113,6 @@ class test_Application(unittest.TestCase):
         sleep(5)
         os.kill(os.getpid(), signal.SIGTERM)
         return
-        
 
     @patch("signal.signal")
     def test_main(self, signal):
@@ -124,7 +123,7 @@ class test_Application(unittest.TestCase):
         from threading import Thread
         t = Thread(target=self.main_signal)
         t.start()
-        thermo_daemon.main(send_freq=1)
+        thermo_daemon.main(send_freq=2)
         self.setup.assert_called()
         self.read.assert_called()
         thermo_daemon.requests.post.assert_has_calls(
