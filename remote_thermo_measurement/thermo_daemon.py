@@ -105,7 +105,7 @@ def main(read_freq=1, send_freq=30, run_once=False):
             if r.status_code >= 400:  # HTTP errors
                 logging.warning("Server returned an HTTP error code (%d): %s",
                                 r.status_code, r.text)
-        time.sleep(read_freq)
+        time.sleep(read_freq)  # TODO: How can we detect exit signals faster?
     data = "{\"rem_mode\": 0}"
     logging.warning("Caught exit signal, exiting.")
     logging.debug("Deactivating remote temperature with payload %s", data)

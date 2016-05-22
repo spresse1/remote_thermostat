@@ -25,6 +25,17 @@ class mock_radiotherm:
         return self.urlbase + url_part
 
 
+def main_signal(time=5):
+    """Sends SIGTERM to the process, which should cause the main thread to
+    exit."""
+    import os
+    from time import sleep
+    import signal
+    sleep(time)
+    os.kill(os.getpid(), signal.SIGTERM)
+    return
+
+
 class test_Application(unittest.TestCase):
     """
     A series of simple tests to validate that this deamon works as intended.
@@ -93,7 +104,7 @@ class test_Application(unittest.TestCase):
         """Tests that the handler for SIGTERM functions correctly."""
         from signal import SIGTERM
         from threading import Thread
-        t = Thread(target=self.main_signal)
+        t = Thread(target=main_signal)
         t.start()
         thermo_daemon.main(send_freq=1)
         #  We don't really care what main did, reset
@@ -109,14 +120,6 @@ class test_Application(unittest.TestCase):
             SIGTERM
         )
 
-    def main_signal(self):
-        import os
-        from time import sleep
-        import signal
-        sleep(5)
-        os.kill(os.getpid(), signal.SIGTERM)
-        return
-
     @patch("signal.signal")
     def test_main(self, signal):
         """Tests the main function.  Forks off a new thread, then uses the
@@ -124,7 +127,7 @@ class test_Application(unittest.TestCase):
         """
         from sys import argv
         from threading import Thread
-        t = Thread(target=self.main_signal)
+        t = Thread(target=main_signal)
         t.start()
         thermo_daemon.main(send_freq=2)
         self.setup.assert_called()
@@ -179,7 +182,7 @@ class test_Application(unittest.TestCase):
         r.text = "Not found"
         r.status_code = 400
         from threading import Thread
-        t = Thread(target=self.main_signal)
+        t = Thread(target=main_signal)
         t.start()
         thermo_daemon.main(send_freq=2)
         self.logging.warning.assert_any_call(
