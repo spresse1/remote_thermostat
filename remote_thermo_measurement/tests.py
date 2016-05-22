@@ -34,6 +34,7 @@ class test_Application(unittest.TestCase):
         """Generic test setup. Just calls out to a generic setup function"""
         r = mock.Mock()
         r.text = "{ \"success\": 0 }"
+        r.status_code = 200
         thermo_daemon.requests.post = mock.MagicMock(return_value=r)
         thermo_daemon.radiotherm.get_thermostat = mock.MagicMock(
             return_value=mock_radiotherm())
@@ -148,7 +149,7 @@ class test_Application(unittest.TestCase):
         self.logging.debug.assert_has_calls([
             call('Read a temperature of %.2f', 61.88),
             call("Payload to the server is: %s", '{"rem_temp": 61.88 }'),
-            call("Server responded: %s", '{ "success": 0 }'),
+            call("Server responded with code %d: %s", 200, '{ "success": 0 }'),
             call(
                 "Deactivating remote temperature with payload %s",
                 '{"rem_mode": 0}'
@@ -171,6 +172,20 @@ class test_Application(unittest.TestCase):
             call("- Conflicting capes"),
             call("Raw exception: %s", BBIO_SETUP_ERROR),
         ])
+
+    def test_main_HTTP_400(self):
+        """Test that we properly throw a warning on HTTP 400+"""
+        r = thermo_daemon.requests.post.return_value  # Mock request object
+        r.text = "Not found"
+        r.status_code = 400
+        from threading import Thread
+        t = Thread(target=self.main_signal)
+        t.start()
+        thermo_daemon.main(send_freq=2)
+        self.logging.warning.assert_any_call(
+            "Server returned an HTTP error code (%d): %s",
+            r.status_code, r.text
+        )
 
 if __name__ == "__main__":
     unittest.main()

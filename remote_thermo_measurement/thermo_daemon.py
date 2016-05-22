@@ -85,7 +85,7 @@ def main(read_freq=1, send_freq=30, run_once=False):
         logging.critical("- Conflicting capes")
         logging.critical("Raw exception: %s", str(e))
         return
-    tstat = connect()
+    tstat = connect()  # TODO: retries
     remote_url = tstat._construct_url('tstat/remote_temp')
     signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
@@ -100,8 +100,11 @@ def main(read_freq=1, send_freq=30, run_once=False):
             data = "{\"rem_temp\": %.2f }" % (avgtemp)
             logging.debug("Payload to the server is: %s", data)
             r = requests.post(remote_url, data=data)
-            logging.debug("Server responded: %s", r.text)
-            # TODO: actually check the response
+            logging.debug("Server responded with code %d: %s",
+                          r.status_code, r.text)
+            if r.status_code >= 400:  # HTTP errors
+                logging.warning("Server returned an HTTP error code (%d): %s",
+                                r.status_code, r.text)
         time.sleep(read_freq)
     data = "{\"rem_mode\": 0}"
     logging.warning("Caught exit signal, exiting.")
