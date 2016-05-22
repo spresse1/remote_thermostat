@@ -58,6 +58,7 @@ def read_temp():
 
 
 def setup():
+    """Performs basic setup for the daemon and ADC"""
     logger.debug("Setting up ADC")
     try:
         ADC.setup()
