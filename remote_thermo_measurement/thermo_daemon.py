@@ -17,6 +17,7 @@ import requests
 import signal
 import logging
 from traceback import format_exc
+from multiprocessing import Lock
 
 calibration = 0
 decay_factor = .1
@@ -25,8 +26,7 @@ sensor_pin = 'P9_40'
 
 logger = logging.getLogger(__name__)
 
-"""Set to true to signal the main process to exit."""
-main_should_exit = False
+exitLock=None
 
 
 def connect():
@@ -59,6 +59,7 @@ def read_temp():
 
 def setup():
     """Performs basic setup for the daemon and ADC"""
+    global exitLock
     logger.debug("Setting up ADC")
     try:
         ADC.setup()
@@ -80,8 +81,11 @@ def setup():
     logger.debug("Attaching signal handlers")
     signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
+    logger.debug("Building Lock for singal interrupts")
+    exitLock = Lock()
+    exitLock.acquire()
     logger.debug("Running main loop")
-    main(tstat)
+    return tstat
 
 
 def main(tstat, read_freq=1, send_freq=30, run_once=False):
@@ -94,12 +98,12 @@ def main(tstat, read_freq=1, send_freq=30, run_once=False):
     """
     from sys import argv
     logger.info("%s starting up!", argv[0])
-    global main_should_exit
-    main_should_exit = False
     remote_url = tstat._construct_url('tstat/remote_temp')
     avgtemp = read_temp()
     reads = 1
-    while not main_should_exit:
+    # acquire() returns true on succesful acquisition, which is when we
+    # want to exit - acquisition means signal was recieved.
+    while not exitLock.acquire(timeout=read_freq):
         # Perform the read and facotr into the average
         avgtemp = ((1 - decay_factor) * avgtemp) + \
             (decay_factor * read_temp())
@@ -113,7 +117,6 @@ def main(tstat, read_freq=1, send_freq=30, run_once=False):
             if r.status_code >= 400:  # HTTP errors
                 logger.warning("Server returned an HTTP error code (%d): %s",
                                r.status_code, r.text)
-        time.sleep(read_freq)  # TODO: How can we detect exit signals faster?
     data = "{\"rem_mode\": 0}"
     logger.warning("Caught exit signal, exiting.")
     logger.debug("Deactivating remote temperature with payload %s", data)
@@ -126,12 +129,10 @@ def handle_exit(signum, frame):
     Handles shutdown by notifying the thermostat we no longer will be sending
     remote temperature data.
     """
-    global main_should_exit
     logger.info("Recieved signal %d, sending exit signal", signum)
-    main_should_exit = True
+    exitLock.release()
 
 
 if __name__ == "__main__":  # pragma: no cover
-    run_once = False
-    secs = 30
-    main(secs, run_once)  # TODO: Catch up to new function prototype.
+    tstat = setup()
+    main(tstat)

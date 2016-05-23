@@ -9,6 +9,7 @@ import unittest
 import thermo_daemon
 from mock import patch
 from mock import call
+from multiprocessing import Lock
 
 BBIO_SETUP_ERROR = """Unable to setup ADC system. Possible causes are:
   - A cape with a conflicting pin mapping is loaded
@@ -57,6 +58,9 @@ class test_Application(unittest.TestCase):
         self.setup = p_setup.start()
         p_logging = patch('thermo_daemon.logger')
         self.logging = p_logging.start()
+        # Set up the lock as if setup had been called.
+        thermo_daemon.exitLock = Lock()
+        thermo_daemon.exitLock.acquire()
 
     def test_readTemp(self):
         """Test reading temperature from the mocked IO"""
@@ -111,6 +115,7 @@ class test_Application(unittest.TestCase):
         self.logging.debug.assert_has_calls([
             call("Setting up ADC"),
             call("Attaching signal handlers"),
+            call('Building Lock for singal interrupts'),
             call("Running main loop"),
         ])
         self.setup.assert_called()
@@ -176,8 +181,9 @@ class test_Application(unittest.TestCase):
         """Tests that the handler for SIGTERM functions correctly."""
         from signal import SIGTERM
         from threading import Thread
+        thermo_daemon.exitLock.release = mock.Mock()
         thermo_daemon.handle_exit(SIGTERM, None)
-        self.assertEqual(True, thermo_daemon.main_should_exit)
+        thermo_daemon.exitLock.release.assert_called()
 
     def test_main_HTTP_400(self):
         """Test that we properly throw a warning on HTTP 400+"""
