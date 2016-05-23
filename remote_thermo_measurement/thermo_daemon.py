@@ -11,7 +11,6 @@ view=all
 """
 
 import Adafruit_BBIO.ADC as ADC
-import time
 import radiotherm
 import requests
 import signal
