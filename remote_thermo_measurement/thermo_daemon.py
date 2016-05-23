@@ -26,7 +26,7 @@ sensor_pin = 'P9_40'
 
 logger = logging.getLogger(__name__)
 
-exitLock=None
+exitLock = None
 
 
 def connect():
