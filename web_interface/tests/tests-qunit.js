@@ -1,16 +1,3 @@
-/*var sysargs = require('system').args;
-console.log(sysargs[sysargs.length-1]);
-workingDir = fs.absolute(sysargs[sysargs.length-1]).split('/');
-workingDir.pop(); //remove filename
-workingDir = workingDir.join('/');
-fs.changeWorkingDirectory(workingDir);
-
-phantom.injectJs("../js/thermostat.js");
-/*
-phantom.injectJs("jquery.min.js");
-phantom.injectJs("sinon-1.17.3.js");
-phantom.injectJs("sinon-server-1.17.3.js");
-*/
 function setUp(context) {
 	context.requests = this.requests = [];
 	context.xhr = sinon.useFakeXMLHttpRequest();
@@ -22,8 +9,6 @@ function setUp(context) {
 function tearDown(context) {
 	context.xhr.restore();
 }
-
-function assert() {} 
 
 QUnit.test('get model',function(test) {
 	setUp(this);
