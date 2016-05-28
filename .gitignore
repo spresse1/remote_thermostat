@@ -65,13 +65,15 @@ target/
 bin/
 include/
 local/
+share/
+src/
 pip-selfcheck.json
-
-# JS libraries we pull down to use
-web_interface/tests/jquery.min.js
-web_interface/tests/sinon-1.17.3.js
-web_interface/tests/phantomjs-2.1.1-linux-x86_64/
-web_interface/tests/phantomjs-2.1.1-linux-x86_64.tar.bz2
 
 # Sphinx output
 remote_thermo_measurement/docs/_build/
+
+# Coverage data
+coverage/
+
+# NPM modules
+node_modules/
