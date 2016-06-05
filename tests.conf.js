@@ -27,8 +27,8 @@ module.exports = function(config) {
     files: [
       'web_interface/js/*.js',
       'web_interface/tests/*.js',
-      'lib/node_modules/sinon/pkg/sinon.js',
-      'lib/node_modules/jquery/dist/jquery.js',
+      'node_modules/sinon/pkg/sinon.js',
+      'node_modules/jquery/dist/jquery.js',
       
     ],
 
