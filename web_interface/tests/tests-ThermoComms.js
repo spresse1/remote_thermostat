@@ -55,12 +55,12 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 	QUnit.test('default address in constructor',function(test) {
 		this.tcomms = new ThermoComms();
 		
-		test.ok(this.tcomms.address=="localhost");
+		test.ok(this.tcomms.address==="localhost");
 	});
 
 	QUnit.test('Specify protocol',function(test) {
 		this.tcomms = new ThermoComms("localhost","foobar");
 		
-		test.ok(this.tcomms.protocol=="foobar");
+		test.ok(this.tcomms.protocol==="foobar");
 	});
 });

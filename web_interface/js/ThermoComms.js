@@ -20,8 +20,6 @@ var ThermoComms = function(address, protocol) {
 	this.thermoModel = "/tstat/model";
 	this.thermoProgramHeat = "/tstat/program/heat";
 	this.thermoProgramCool = "/tstat/program/cool";
-	
-	var that = this;
 };
 
 ThermoComms.ajaxFailed = function(xhr, status, errorThrown) {
@@ -32,7 +30,8 @@ ThermoComms.ajaxFailed = function(xhr, status, errorThrown) {
 }
 
 ThermoComms.ajaxAlways = function(xhr, status) {
-	//console.dir( xhr );
+	console.log("Request returned ", status, " full listing follows");
+	console.dir( xhr );
 }
 
 /**
