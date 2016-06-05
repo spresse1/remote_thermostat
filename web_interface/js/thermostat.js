@@ -23,7 +23,10 @@ function ajaxAlways(xhr, status) {
 	//console.dir( xhr );
 }
 
-function getModel(callback) {
+/**
+* Use to determine the model of the thermostat.  Returns a string
+*/
+function getModel(callback, failCallback) {
 	$.ajax({
 		url: thermoHostname + thermoModel,
 		type: "GET",
@@ -33,11 +36,18 @@ function getModel(callback) {
 		this.model = json.model.split(" ")[0];
 		callback(this.model);
 	})
-	.fail(function (xhr, status, errorThrown) { 
-		ajaxFailed(xhr, status, errorThrown)
+	.fail(function (xhr, status, errorThrown) {
+		 /* istanbul ignore else */
+		if (failCallback !== undefined) {
+			failCallback(xhr, status, errorThrown)
+		} else { // pragma: no cover
+			ajaxFailed(xhr, status, errorThrown)
+		}
 	})
 	.always(function (xhr, status) { ajaxAlways(xhr, status) })	
 }
+
+
 
 /*function loadProgram() {
 	$.ajax({
