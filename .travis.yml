@@ -12,7 +12,12 @@ env:
   - TOXENV=js
   - TOXENV=jscover
   - TOXENV=js
-install: pip install tox-travis
+install: 
+  - pip install tox-travis
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install
 script: tox
 
 # This awfulness is so we can run tests under xvfb
