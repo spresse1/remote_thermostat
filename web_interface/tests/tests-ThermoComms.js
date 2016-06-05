@@ -6,8 +6,6 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 	hooks.beforeEach( function() {
 		console.log("Running beforeEach");
 		this.server = sinon.fakeServer.create();
-		
-		this.tcomms = new ThermoComms("localhost")
 	});
 	
 	hooks.afterEach( function() {
@@ -17,6 +15,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 
 	QUnit.test('get model',function(test) {
 		var done = test.async();
+		this.tcomms = new ThermoComms("localhost");
+
 		var callback = function(name, version) {
 			console.log("Given result of", name, version)
 			test.ok(name==="CT80", "Model name is correct");
@@ -31,6 +31,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 
 	QUnit.test('Test AJAX failure code',function(test) {
 		var done = test.async();
+		this.tcomms = new ThermoComms("localhost")
 		
 		var cb_failure = function(xhr, status, errorThrown) {
 			console.log("In failure branch.");
@@ -49,5 +50,17 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 		this.tcomms.getModelVersion(cb_success, cb_failure);
 		this.server.requests[0].respond(404, {}, "");
 
+	});
+
+	QUnit.test('default address in constructor',function(test) {
+		this.tcomms = new ThermoComms();
+		
+		test.ok(this.tcomms.address=="localhost");
+	});
+
+	QUnit.test('Specify protocol',function(test) {
+		this.tcomms = new ThermoComms("localhost","foobar");
+		
+		test.ok(this.tcomms.protocol=="foobar");
 	});
 });

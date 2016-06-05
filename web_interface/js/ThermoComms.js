@@ -59,10 +59,10 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 		success_cb(model, version);
 	})
 	.fail(function (xhr, status, errorThrown) {
-		 /* istanbul ignore else */
+		/* istanbul ignore else */
 		if (fail_cb !== undefined) {
 			fail_cb(xhr, status, errorThrown)
-		} else { // pragma: no cover
+		} else {
 			ThermoComms.ajaxFailed(xhr, status, errorThrown)
 		}
 	})
