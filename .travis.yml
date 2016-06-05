@@ -8,7 +8,7 @@ env:
   - TOXENV=pep8
   - TOXENV=pylint
   - TOXENV=docs
-  - TOXENV=codacy-coverage-upload TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
+#  - TOXENV=codacy-coverage-upload TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
   - TOXENV=codacy-coverage-upload-js TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
   - TOXENV=js
   - TOXENV=jscover
