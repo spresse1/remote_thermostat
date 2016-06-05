@@ -1,7 +1,13 @@
-QUnit.module("Thermostat model info (getModel()) functions", function(hooks) {
+/**
+ * Tests for ThermoComms.
+ */
+
+QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 	hooks.beforeEach( function() {
 		console.log("Running beforeEach");
 		this.server = sinon.fakeServer.create();
+		
+		this.tcomms = new ThermoComms("localhost")
 	});
 	
 	hooks.afterEach( function() {
@@ -11,12 +17,14 @@ QUnit.module("Thermostat model info (getModel()) functions", function(hooks) {
 
 	QUnit.test('get model',function(test) {
 		var done = test.async();
-		var callback = function(name) {
+		var callback = function(name, version) {
+			console.log("Given result of", name, version)
 			test.ok(name==="CT80", "Model name is correct");
+			test.ok(version==="V2.14T", "Version ID is correct");
 			done();
 		};
 	
-		getModel(callback);
+		this.tcomms.getModelVersion(callback);
 		this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 			'{"model":"CT80 V2.14T"}');
 	});
@@ -26,7 +34,7 @@ QUnit.module("Thermostat model info (getModel()) functions", function(hooks) {
 		
 		var cb_failure = function(xhr, status, errorThrown) {
 			console.log("In failure branch.");
-			ajaxFailed(xhr, status, errorThrown);
+			ThermoComms.ajaxFailed(xhr, status, errorThrown);
 			test.ok(true, "Called into failure code");
 			done();
 		}
@@ -38,7 +46,7 @@ QUnit.module("Thermostat model info (getModel()) functions", function(hooks) {
 		}
 	
 		console.log("About to call into function under test");
-		getModel(cb_success, cb_failure);
+		this.tcomms.getModelVersion(cb_success, cb_failure);
 		this.server.requests[0].respond(404, {}, "");
 
 	});

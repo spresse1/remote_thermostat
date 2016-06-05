@@ -15,12 +15,18 @@ module.exports = function(config) {
     
     // Plugins to use
     //plugins: ['karma-threshold-reporter'],
+    //plugins: [
+    //  'karma-qunit',
+    //  'karma-threshold-reporter',
+    //  'karma-coverage',
+    //  'karma-phantomjs-launcher'
+    //],
 
 
     // list of files / patterns to load in the browser
     files: [
       'web_interface/js/*.js',
-      'web_interface/tests/tests-qunit.js',
+      'web_interface/tests/*.js',
       'lib/node_modules/sinon/pkg/sinon.js',
       'lib/node_modules/jquery/dist/jquery.js',
       
@@ -64,7 +70,10 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: [
+      'PhantomJS',
+      //'Chrome'
+    ],
 
 
     // Continuous Integration mode
@@ -76,11 +85,12 @@ module.exports = function(config) {
     concurrency: Infinity,
     
     // Configure coverage to output TYPE to LOCATION
-    coverageReporter: {
-      type : 'lcovonly',
-      subdir: '.',
-      file: 'jscover.lcov'
-      //dir : 'coverage/'
+        coverageReporter: {
+      dir: 'coverage',
+      reporters: [
+        { type: 'html', subdir: 'report-html' },
+        { type: 'lcovonly', subdir: '.', file: 'jscover.lcov' }
+      ]
     },
     
     thresholdReporter: {
