@@ -4,15 +4,13 @@ language: python
 #script: ./.travis.sh
 env:
   - TOXENV=py27
-  - TOXENV=pycover
+  - TOXENV=js
   - TOXENV=pep8
   - TOXENV=pylint
-  - TOXENV=docs
-#  - TOXENV=codacy-coverage-upload TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
-  - TOXENV=codacy-coverage-upload-js TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
-  - TOXENV=js
+  - TOXENV=pycover
   - TOXENV=jscover
-  - TOXENV=js
+  - TOXENV=codacy-coverage-upload TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
+#  - TOXENV=docs
 install: 
   - pip install tox-travis
   - . $HOME/.nvm/nvm.sh
