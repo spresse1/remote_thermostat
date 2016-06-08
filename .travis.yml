@@ -10,6 +10,7 @@ env:
   - TOXENV=pycover
   - TOXENV=jscover
   - TOXENV=codacy-coverage-upload TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
+  - TOXENV=codacy-coverage-upload-js TOX_TESTENV_PASSENV=CODACY_PROJECT_TOKEN
 #  - TOXENV=docs
 install: 
   - pip install tox-travis
