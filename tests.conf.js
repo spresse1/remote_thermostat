@@ -89,7 +89,8 @@ module.exports = function(config) {
       dir: 'coverage',
       reporters: [
         { type: 'html', subdir: 'report-html' },
-        { type: 'cobertura', subdir: '.', file: 'jscover.xml' }
+        { type: 'cobertura', subdir: '.', file: 'jscover.xml' },
+        { type: 'lcovonly', subdir: '.', file: 'jscover.lcov' }
       ]
     },
     
