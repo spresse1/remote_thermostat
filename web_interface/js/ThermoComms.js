@@ -9,13 +9,13 @@
  *     thermostat.  If not explicitly set, defaults to "http"
  */
 var ThermoComms = function(address, protocol) {
-	if (address!==undefined){
+	if (typeof address !== "undefined"){
 		this.address = address;
 	} else {
 		this.address = "localhost";
 	}
 	
-	this.protocol = ( protocol !== undefined ) ? protocol : "http"
+	this.protocol = ( typeof protocol !== "undefined" ) ? protocol : "http";
 	this.thermoInfo = "/tstat";
 	this.thermoModel = "/tstat/model";
 	this.thermoProgramHeat = "/tstat/program/heat";
@@ -54,7 +54,7 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 		success_cb(this.model, this.verison)
 	}
 	
-	tcommObject = this
+	var tcommObject = this
 	
 	$.ajax({
 		url: this.protocol + "://" + this.address + this.thermoModel,
@@ -62,8 +62,8 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 		dataType: "json",
 	})
 	.done(function (json) {
-		model = json.model.split(" ")[0];
-		version = json.model.split(" ")[1];
+		var model = json.model.split(" ")[0];
+		var version = json.model.split(" ")[1];
 		console.log("Recieved result of", model, version);
 		
 		tcommObject.model = model;
@@ -81,7 +81,7 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 	})
 	.always(function (xhr, status) {
 		ThermoComms.ajaxAlways(xhr, status)
-	})
+	});
 }
 
 /**
@@ -103,7 +103,7 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
  *     See jQuery's ajax.fail() for details.
  */
 ThermoComms.prototype.getState = function(success_cb, fail_cb) {
-	context = this;
+	var context = this;
 	// We need to know what model, wrap the whole call as the CB to getting that
 	this.getModelVersion(function() {
 		$.ajax({
@@ -114,7 +114,7 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
 		.done(function (json) {
 			console.log("Recieved result of", json);
 		
-			result = {}
+			var result = {}
 		
 			result.temp = json.temp
 			result.hvac_state = json.ttarget
@@ -162,7 +162,7 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
  *     See jQuery's ajax.fail() for details.
  */
 ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
-	context = this;
+	var context = this;
 	// We need to know what model, wrap the whole call as the CB to getting that
 	this.getModelVersion(function() {
 	 	$.ajax({
@@ -173,7 +173,7 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 		.done(function (json) {
 			console.log("Recieved result of", json);
 		
-			result = {}
+			var result = {}
 		
 			// Figure out what temperature to read
 			if (json.t_heat) {
