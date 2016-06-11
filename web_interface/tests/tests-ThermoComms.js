@@ -13,7 +13,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 		this.server.restore();
 	});
 	
-	QUnit.module("ThermoComs.constructor", function(hooks) {	
+	QUnit.module("ThermoComms.constructor", function() {
 		QUnit.test('default address in constructor',function(test) {
 			this.tcomms = new ThermoComms();
 		
@@ -27,7 +27,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 		});
 	});
 
-	QUnit.module("ThermoComs.getModelVersion", function(hooks) {
+	QUnit.module("ThermoComs.getModelVersion", function() {
 		QUnit.test('get model',function(test) {
 			var done = test.async();
 			this.tcomms = new ThermoComms("localhost");
@@ -37,9 +37,9 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				console.log("Given result of", name, version)
 				test.ok(name==="CT80", "Model name is correct");
 				test.ok(version==="V2.14T", "Version ID is correct");
-				test.ok(testOb.tcomms.model=="CT80", "Object has model set");
+				test.ok(testOb.tcomms.model==="CT80", "Object has model set");
 				test.ok(
-					testOb.tcomms.version=="V2.14T",
+					testOb.tcomms.version==="V2.14T",
 					"Object has version set");
 				done();
 			};

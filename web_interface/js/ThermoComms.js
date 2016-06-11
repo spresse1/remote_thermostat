@@ -118,7 +118,7 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
 		
 			result.temp = json.temp
 			result.hvac_state = json.ttarget
-			if (context.model == "CT30") {
+			if (context.model === "CT30") {
 				result.fan_state = json.fstate;
 			} else {
 				result.fan_state = ( json.fmode >=1 ) ? 1 : 0
