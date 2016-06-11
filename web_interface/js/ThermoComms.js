@@ -57,7 +57,7 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 		success_cb(this.model, this.verison);
 	}
 	
-	var tcommObject = this
+	var tcommObject = this;
 	
 	$.ajax({
 		url: this.protocol + "://" + this.address + this.thermoModel,
@@ -139,8 +139,8 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
 			}
 		})
 		.always(function (xhr, status) {
-			ThermoComms.ajaxAlways(xhr, status)
-		})
+			ThermoComms.ajaxAlways(xhr, status);
+		});
 	}, fail_cb);
 };
 
@@ -206,7 +206,7 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 		})
 		.fail(function (xhr, status, errorThrown) {
 			/* istanbul ignore else */
-			if (fail_cb !== undefined) {
+			if (typeof fail_cb !== "undefined") {
 				fail_cb(xhr, status, errorThrown);
 			} else {
 				ThermoComms.ajaxFailed(xhr, status, errorThrown);

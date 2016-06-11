@@ -67,7 +67,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				console.log("In success mode");
 				test.ok(false, "Called into failure code");
 				done();
-			}
+			};
 	
 			console.log("About to call into function under test");
 			this.tcomms.getModelVersion(cb_success, cb_failure);
