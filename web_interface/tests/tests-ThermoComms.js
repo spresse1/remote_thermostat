@@ -102,12 +102,12 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{\
-					"temp": 45.6, \
-					"ttarget": 0, \
-					"fmode": 0, \
-					"time": {"day": 0, "hour": 1, "minutes": 2} \
-				}');
+				'{' +
+					'"temp": 45.6, ' +
+					'"ttarget": 0, ' +
+					'"fmode": 0, ' +
+					'"time": {"day": 0, "hour": 1, "minutes": 2} ' +
+				'}');
 		});
 		
 		QUnit.test("getState fan on", function(test) {
@@ -126,8 +126,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.tcomms.getState(cb_success);
 			this.server.requests[0].respond(
 				200, { "Content-Type": "text/plain" }, 
-				'{"temp": 45.6, "ttarget": 0, "fmode": 2, \
-				"time": {"day": 0, "hour": 1, "minutes": 2} }');
+				'{"temp": 45.6, "ttarget": 0, "fmode": 2, ' +
+				'"time": {"day": 0, "hour": 1, "minutes": 2} }');
 		});
 		
 		QUnit.test("getState CT30", function(test) {
@@ -147,8 +147,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.tcomms.getState(cb_success);
 			this.server.requests[0].respond(
 				200, { "Content-Type": "text/plain" }, 
-				'{"temp": 45.6, "ttarget": 0, "fstate": 0, \
-				"time": {"day": 0, "hour": 1, "minutes": 2} }');
+				'{"temp": 45.6, "ttarget": 0, "fstate": 0, ' +
+				'"time": {"day": 0, "hour": 1, "minutes": 2} }');
 		});
 		
 		QUnit.test('Test AJAX failure code',function(test) {
@@ -205,14 +205,14 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{\
-					"t_heat": 43.5, \
-					"tmode": 0, \
-					"fmode": 0, \
-					"program_mode": 0, \
-					"override": 0, \
-					"hold": 0 \
-				}');
+				'{' +
+					'"t_heat": 43.5, ' +
+					'"tmode": 0, ' +
+					'"fmode": 0, ' +
+					'"program_mode": 0, ' +
+					'"override": 0, ' +
+					'"hold": 0 ' +
+				'}');
 		});
 		
 		QUnit.test("getTarget fan on", function(test) {
@@ -237,8 +237,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"t_heat": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"t_heat": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test("getTarget t_cool", function(test) {
@@ -263,8 +263,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"t_cool": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"t_cool": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test("getTarget it_heat", function(test) {
@@ -289,8 +289,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"it_heat": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"it_heat": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test("getTarget it_cool", function(test) {
@@ -315,8 +315,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"it_cool": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"it_cool": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test("getTarget a_heat", function(test) {
@@ -341,8 +341,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"a_heat": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"a_heat": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test("getTarget a_cool", function(test) {
@@ -367,8 +367,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"a_cool": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"a_cool": 43.5, "tmode": 0, "fmode": 2, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test("getTarget no temp", function(test) {
@@ -393,8 +393,8 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 			this.server.requests[0].respond(200, { "Content-Type": "text/plain" }, 
 				'{"model":"CT80 V2.14T"}');
 			this.server.requests[1].respond(200, { "Content-Type": "text/plain" }, 
-				'{"tmode": 0, "fmode": 0, "program_mode": 0, \
-					"override": 0, "hold": 0 }');
+				'{"tmode": 0, "fmode": 0, "program_mode": 0, ' +
+					'"override": 0, "hold": 0 }');
 		});
 		
 		QUnit.test('Test AJAX failure code',function(test) {
