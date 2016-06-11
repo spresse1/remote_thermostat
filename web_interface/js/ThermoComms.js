@@ -34,12 +34,12 @@ ThermoComms.ajaxFailed = function(xhr, status, errorThrown) {
 		xhr.status + ": " + xhr.statusText );
 	console.log( "Error: " + errorThrown );
 	console.log( "Status: " + status );
-}
+};
 
 ThermoComms.ajaxAlways = function(xhr, status) {
 	console.log("Request returned ", status, " full listing follows");
 	console.dir( xhr );
-}
+};
 
 /**
  * Fetches/updates the model and version of a thermostat.
@@ -77,15 +77,15 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 	.fail(function (xhr, status, errorThrown) {
 		/* istanbul ignore else */
 		if (typeof fail_cb !== "undefined") {
-			fail_cb(xhr, status, errorThrown)
+			fail_cb(xhr, status, errorThrown);
 		} else {
-			ThermoComms.ajaxFailed(xhr, status, errorThrown)
+			ThermoComms.ajaxFailed(xhr, status, errorThrown);
 		}
 	})
 	.always(function (xhr, status) {
-		ThermoComms.ajaxAlways(xhr, status)
+		ThermoComms.ajaxAlways(xhr, status);
 	});
-}
+};
 
 /**
  * Fetches/updates the (volatile) state of the thermostat
@@ -132,7 +132,7 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
 		})
 		.fail(function (xhr, status, errorThrown) {
 			/* istanbul ignore else */
-			if (fail_cb !== undefined) {
+			if (typeof fail_cb !== "undefined") {
 				fail_cb(xhr, status, errorThrown);
 			} else {
 				ThermoComms.ajaxFailed(xhr, status, errorThrown);
@@ -142,7 +142,7 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
 			ThermoComms.ajaxAlways(xhr, status)
 		})
 	}, fail_cb);
-}
+};
 
 /**
  * Fetches/updates the (volatile) state of the thermostat
@@ -216,4 +216,4 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 			ThermoComms.ajaxAlways(xhr, status);
 		})
 	}, fail_cb);
-}
+};
