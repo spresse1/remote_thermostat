@@ -214,6 +214,6 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 		})
 		.always(function (xhr, status) {
 			ThermoComms.ajaxAlways(xhr, status);
-		})
+		});
 	}, fail_cb);
 };

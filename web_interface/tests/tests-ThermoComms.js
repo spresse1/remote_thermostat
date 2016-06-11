@@ -96,7 +96,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				test.deepEqual(json.time, {"day": 0, "hour": 1, "minutes": 2 },
 					"time set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -124,7 +124,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				test.deepEqual(json.time, {"day": 0, "hour": 1, "minutes": 2 },
 					"time set correctly");
 				done();
-			}
+			};
 
 			this.tcomms.getState(cb_success);
 			this.server.requests[0].respond(
@@ -144,7 +144,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				test.deepEqual(json.time, {"day": 0, "hour": 1, "minutes": 2 },
 					"time set correctly");
 				done();
-			}
+			};
 
 			this.tcomms.model = "CT30";
 			this.tcomms.getState(cb_success);
@@ -162,13 +162,13 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				ThermoComms.ajaxFailed(xhr, status, errorThrown);
 				test.ok(true, "Called into failure code");
 				done();
-			}
+			};
 	
 			var cb_success = function(name) {
 				console.log("In success mode");
 				test.ok(false, "Called into failure code");
 				done();
-			}
+			};
 	
 			console.log("About to call into function under test");
 			this.tcomms.getState(cb_success, cb_failure);
@@ -199,7 +199,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -231,7 +231,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -257,7 +257,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -283,7 +283,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -309,7 +309,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -335,7 +335,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -361,7 +361,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -387,7 +387,7 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 					"program override set correctly");
 				test.equal(json.program.hold, 0, "Program hold set correctly");
 				done();
-			}
+			};
 			
 			this.tcomms.model=undefined;
 			this.tcomms.version=undefined;
@@ -408,13 +408,13 @@ QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 				ThermoComms.ajaxFailed(xhr, status, errorThrown);
 				test.ok(true, "Called into failure code");
 				done();
-			}
+			};
 	
 			var cb_success = function(name) {
 				console.log("In success mode");
 				test.ok(false, "Called into failure code");
 				done();
-			}
+			};
 	
 			console.log("About to call into function under test");
 			this.tcomms.getTarget(cb_success, cb_failure);
