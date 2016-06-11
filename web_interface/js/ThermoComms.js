@@ -1,3 +1,6 @@
+/*global
+$
+*/
 /**
  * A library-internal class to manage communication with the thermostat.  More
  * or less an AJAx wrapper that is very specific to this API.
@@ -51,7 +54,7 @@ ThermoComms.ajaxAlways = function(xhr, status) {
  */
 ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 	if (this.model && this.version) {
-		success_cb(this.model, this.verison)
+		success_cb(this.model, this.verison);
 	}
 	
 	var tcommObject = this
@@ -73,7 +76,7 @@ ThermoComms.prototype.getModelVersion = function(success_cb, fail_cb) {
 	})
 	.fail(function (xhr, status, errorThrown) {
 		/* istanbul ignore else */
-		if (fail_cb !== undefined) {
+		if (typeof fail_cb !== "undefined") {
 			fail_cb(xhr, status, errorThrown)
 		} else {
 			ThermoComms.ajaxFailed(xhr, status, errorThrown)
@@ -114,25 +117,25 @@ ThermoComms.prototype.getState = function(success_cb, fail_cb) {
 		.done(function (json) {
 			console.log("Recieved result of", json);
 		
-			var result = {}
+			var result = {};
 		
-			result.temp = json.temp
-			result.hvac_state = json.ttarget
+			result.temp = json.temp;
+			result.hvac_state = json.ttarget;
 			if (context.model === "CT30") {
 				result.fan_state = json.fstate;
 			} else {
-				result.fan_state = ( json.fmode >=1 ) ? 1 : 0
+				result.fan_state = ( json.fmode >=1 ) ? 1 : 0;
 			}
-			result.time = json.time
+			result.time = json.time;
 		
 			success_cb(result);
 		})
 		.fail(function (xhr, status, errorThrown) {
 			/* istanbul ignore else */
 			if (fail_cb !== undefined) {
-				fail_cb(xhr, status, errorThrown)
+				fail_cb(xhr, status, errorThrown);
 			} else {
-				ThermoComms.ajaxFailed(xhr, status, errorThrown)
+				ThermoComms.ajaxFailed(xhr, status, errorThrown);
 			}
 		})
 		.always(function (xhr, status) {
@@ -165,7 +168,7 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 	var context = this;
 	// We need to know what model, wrap the whole call as the CB to getting that
 	this.getModelVersion(function() {
-	 	$.ajax({
+		$.ajax({
 			url: context.protocol + "://" + context.address + context.thermoInfo,
 			type: "GET",
 			dataType: "json",
@@ -173,7 +176,7 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 		.done(function (json) {
 			console.log("Recieved result of", json);
 		
-			var result = {}
+			var result = {};
 		
 			// Figure out what temperature to read
 			if (json.t_heat) {
@@ -189,15 +192,15 @@ ThermoComms.prototype.getTarget = function(success_cb, fail_cb) {
 			} else if (json.a_cool) {
 				result.temp = json.a_cool;
 			} else {
-				result.temp = -1
+				result.temp = -1;
 			}
 			result.hvac_mode = json.tmode;
 			result.fan_mode = ( json.fmode <=1 ) ? 0 : 1 ;
 		
-			result.program = {}
-			result.program.mode = json.program_mode
-			result.program.override = json.override
-			result.program.hold = json.hold
+			result.program = {};
+			result.program.mode = json.program_mode;
+			result.program.override = json.override;
+			result.program.hold = json.hold;
 			
 			success_cb(result);
 		})

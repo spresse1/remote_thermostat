@@ -1,6 +1,9 @@
 /**
  * Tests for ThermoComms.
  */
+/*global
+QUnit, ThermoComms
+*/
 
 QUnit.module("Thermostat Communication (ThermoComms)", function(hooks) {
 	hooks.beforeEach( function() {
